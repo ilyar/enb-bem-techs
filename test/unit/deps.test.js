@@ -85,7 +85,8 @@ describe('libs: deps', function () {
                 { block: 'block1', mod: 'mod1', val: 'val1' },
                 { block: 'block1', elem: 'elem1' },
                 { block: 'block1', elem: 'elem1', mod: 'mod2' },
-                { block: 'block1', elem: 'elem1', mod: 'mod2', val: 'val2' }
+                { block: 'block1', elem: 'elem1', mod: 'mod2', val: 'val2' },
+                { block: 'block2', elem: ['elem2'], mod: 'mod', val: 'val' }
             ],
             output = [
                 { name: 'block1' },
@@ -93,7 +94,8 @@ describe('libs: deps', function () {
                 { name: 'block1', mods: [{ name: 'mod1', vals: [{ name: 'val1' }] }] },
                 { name: 'block1', elems: [{ name: 'elem1' }] },
                 { name: 'block1', elems: [{ name: 'elem1', mods: [{ name: 'mod2' }] }] },
-                { name: 'block1', elems: [{ name: 'elem1', mods: [{ name: 'mod2', vals: [{ name: 'val2' }] }] }] }
+                { name: 'block1', elems: [{ name: 'elem1', mods: [{ name: 'mod2', vals: [{ name: 'val2' }] }] }] },
+                { name: 'block2', elems: [{ name: 'elem2', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }] },
             ];
 
         deps.toBemdecl(input).must.be.eql(output);
