@@ -6,7 +6,7 @@ const stream = require('stream');
 
 const vow = require('vow');
 const enb = require('enb');
-const walk = require('bem-walk');
+const walk = require('@bem/sdk.walk');
 const originNamingPreset = require('@bem/sdk.naming.presets').origin;
 const stringifyEntity = require('@bem/sdk.naming.entity.stringify')(originNamingPreset);
 const uniqBy = require('lodash').uniqBy;
@@ -185,11 +185,24 @@ module.exports = buildFlow.create()
                             tryCatch(() => {
                                 const id = stringifyEntity(file.entity);
                                 const stats = fs.statSync(file.path);
+                                const entity = file.entity;
+                                const entityData = entity.toJSON();
 
-                                file.isDirectory = stats.isDirectory();
-                                file.mtime = stats.mtime.getTime();
+                                entity.modName && (entityData.modName = entity.modName);
+                                entity.modVal && (entityData.modVal = entity.modVal);
 
-                                (data[id] || (data[id] = [])).push(file);
+                                delete entityData.mod;
+
+                                const fileData = {
+                                    entity: entityData,
+                                    tech: file.tech,
+                                    level: file.level,
+                                    path: file.path,
+                                    isDirectory: stats.isDirectory(),
+                                    mtime: stats.mtime.getTime()
+                                };
+
+                                (data[id] || (data[id] = [])).push(fileData);
 
                                 callback();
                             }, callback);
