@@ -175,7 +175,7 @@ module.exports = buildFlow.create()
          */
         _forceScanLevel: function (levelpath) {
             return new vow.Promise((resolve, reject) => {
-                const data = {};
+                const fileMap = new Map();
 
                 walk([levelpath])
                     .on('error', reject)
@@ -189,14 +189,29 @@ module.exports = buildFlow.create()
                                 file.isDirectory = stats.isDirectory();
                                 file.mtime = stats.mtime.getTime();
 
-                                (data[id] || (data[id] = [])).push(file);
+                                const entityFiles = fileMap.get(id) || [];
+                                if (!fileMap.has(id)) {
+                                    fileMap.set(id, entityFiles);
+                                }
+                                entityFiles.push(file);
 
                                 callback();
                             }, callback);
                         }
                     }))
                     .on('error', reject)
-                    .on('finish', () => resolve(data));
+                    .on('finish', () => {
+                        const data = Array.from(fileMap).reduce((o, entiry) => {
+                            const key = entiry[0];
+                            const val = entiry[1];
+
+                            o[key] = val;
+
+                            return o;
+                        }, {});
+
+                        resolve(data);
+                    });
             });
         }
     })
